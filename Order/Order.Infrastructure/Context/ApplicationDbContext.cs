@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Order.Domain.Entities;
+using Order.Domain.Shares;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Order.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            Guid OrderId = Guid.NewGuid();
+            long OrderId = OrderIdUtility.GetNewOrderId();
 
             modelBuilder.Entity<Order.Domain.Entities.Order>()
                 .HasData(
@@ -35,8 +36,8 @@ namespace Order.Infrastructure.Context
                         Note = "Giao hàng nhanh",
                         Status = Domain.Enums.OrderStatus.PENDING,
                         TotalPrice = 289814,
-                        CreatedBy = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
-                        LastModifiedBy = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
+                        CreatedById = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
+                        LastModifiedById = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
                     }
                 );
 

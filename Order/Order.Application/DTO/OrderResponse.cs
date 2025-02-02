@@ -12,7 +12,7 @@ namespace Order.Application.DTO
 {
     public class OrderResponse
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         [Required]
         [StringLength(100)]
         public string FullName { get; set; }

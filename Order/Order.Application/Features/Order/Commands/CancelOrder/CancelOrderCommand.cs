@@ -12,7 +12,7 @@ namespace Order.Application.Features.Order.Commands.CancelOrder
     public class CancelOrderCommand : IRequest
     {
         [JsonIgnore]
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         [JsonIgnore]
         public Guid LastModifiedBy { get; set; }
     }

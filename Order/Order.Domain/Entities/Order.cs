@@ -3,13 +3,14 @@ using Order.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Order.Domain.Entities
 {
-    public class Order : AuditableBaseEntity<Guid>
+    public class Order : AuditableBaseEntity<long>
     {
         [Required]
         [StringLength(100)]
@@ -17,7 +18,7 @@ namespace Order.Domain.Entities
         [Required]
         [StringLength(10)]
         [Phone]
-        public string Phone {  get; set; }
+        public string Phone { get; set; }
         [Required]
         [StringLength(500)]
         public string Address { get; set; }

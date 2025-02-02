@@ -6,16 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Order.Application.Wrappers;
 
 namespace Order.Application.Features.Order.Queries.GetOrder
 {
-    public class GetOrderQueryHandler(IOrderRepository orderRepository) : IRequestHandler<GetOrderQuery, OrderResponse>
+    public class GetOrderQueryHandler(IOrderRepository _orderRepository) 
+        : IRequestHandler<GetOrderQuery, OrderResponse>
     {
-        private readonly IOrderRepository _orderRepository = orderRepository;
-
         public async Task<OrderResponse> Handle(GetOrderQuery request, CancellationToken cancellationToken)
         {
-            return await _orderRepository.GetOrder(request.Id);
+            var order = await _orderRepository.GetOrder(request.Id);
+
+            return order;
         }
     }
 }

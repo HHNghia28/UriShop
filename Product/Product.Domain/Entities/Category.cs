@@ -1,4 +1,4 @@
-﻿using UriStore.Domain.Common;
+﻿using Order.Domain.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

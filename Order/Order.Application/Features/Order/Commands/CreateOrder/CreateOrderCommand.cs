@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Order.Application.Features.Order.Commands.CreateOrder
 {
-    public class CreateOrderCommand : IRequest
+    public class CreateOrderCommand : IRequest<long>
     {
         [Required]
         [StringLength(100)]

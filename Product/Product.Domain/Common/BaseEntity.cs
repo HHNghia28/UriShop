@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UriStore.Domain.Common
+namespace Order.Domain.Common
 {
     public abstract class BaseEntity<T>
     {

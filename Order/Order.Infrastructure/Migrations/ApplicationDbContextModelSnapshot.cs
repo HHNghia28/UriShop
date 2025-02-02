@@ -24,9 +24,11 @@ namespace Order.Infrastructure.Migrations
 
             modelBuilder.Entity("Order.Domain.Entities.Order", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -36,7 +38,7 @@ namespace Order.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
                     b.Property<int>("DiscountFee")
@@ -50,7 +52,7 @@ namespace Order.Infrastructure.Migrations
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("LastModifiedBy")
+                    b.Property<Guid>("LastModifiedById")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Note")
@@ -90,14 +92,14 @@ namespace Order.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("81b32b4d-75ab-45ca-b932-ad2197004ade"),
+                            Id = 2502022322558484L,
                             Address = "Cần Thơ",
-                            CreatedAt = new DateTime(2025, 1, 18, 13, 12, 23, 86, DateTimeKind.Utc).AddTicks(389),
-                            CreatedBy = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
+                            CreatedAt = new DateTime(2025, 2, 2, 16, 22, 55, 848, DateTimeKind.Utc).AddTicks(4364),
+                            CreatedById = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
                             DiscountFee = 0,
                             FullName = "Huỳnh Hữu Nghĩa",
-                            LastModifiedAt = new DateTime(2025, 1, 18, 13, 12, 23, 86, DateTimeKind.Utc).AddTicks(391),
-                            LastModifiedBy = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
+                            LastModifiedAt = new DateTime(2025, 2, 2, 16, 22, 55, 848, DateTimeKind.Utc).AddTicks(4364),
+                            LastModifiedById = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f207"),
                             Note = "Giao hàng nhanh",
                             Phone = "0832474699",
                             ShippingFee = 32000,
@@ -127,8 +129,8 @@ namespace Order.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Photo")
                         .IsRequired()
@@ -153,11 +155,11 @@ namespace Order.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9d6837ec-e060-4ffc-a13c-e15d338cf25e"),
+                            Id = new Guid("5770d571-36cc-4d0c-b8bd-380250c52e54"),
                             Category = "Coffee",
                             Discount = 0,
                             Name = "PhinDi Cassia",
-                            OrderId = new Guid("81b32b4d-75ab-45ca-b932-ad2197004ade"),
+                            OrderId = 2502022322558484L,
                             Photo = "https://www.highlandscoffee.com.vn/vnt_upload/product/06_2024/Phindi_Cassia/Phindi_Cassia_Highlands_products_Image1.jpg",
                             Price = 55000,
                             ProductId = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f201"),
@@ -165,11 +167,11 @@ namespace Order.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8be8d0fd-6ff6-4d30-8268-92c7329a9229"),
+                            Id = new Guid("a48109e3-7a52-4ed4-bf5a-ed36750c67a0"),
                             Category = "Coffee",
                             Discount = 5,
                             Name = "Phindi Hạt Dẻ Cười",
-                            OrderId = new Guid("81b32b4d-75ab-45ca-b932-ad2197004ade"),
+                            OrderId = 2502022322558484L,
                             Photo = "https://www.highlandscoffee.com.vn/vnt_upload/product/08_2023/Phindi_Pitaschio.jpg",
                             Price = 65000,
                             ProductId = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f202"),
@@ -177,11 +179,11 @@ namespace Order.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e6c309bd-62fb-4c0b-9ffd-7a2e7ce02e30"),
+                            Id = new Guid("3c719266-c4f0-41b1-94b2-0be567f06578"),
                             Category = "Other",
                             Discount = 3,
                             Name = "BÁNH TRUNG THU - BÒ XỐT VANG - HIGHLANDS COFFEE",
-                            OrderId = new Guid("81b32b4d-75ab-45ca-b932-ad2197004ade"),
+                            OrderId = 2502022322558484L,
                             Photo = "https://www.highlandscoffee.com.vn/vnt_upload/product/08_2024/Mooncake/MOONCAKES_PRODUCTSBO-XOT-VANG.png",
                             Price = 109000,
                             ProductId = new Guid("868e6f06-9728-48c3-a5d7-5d1aadf4f209"),

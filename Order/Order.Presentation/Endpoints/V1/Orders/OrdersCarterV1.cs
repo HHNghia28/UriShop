@@ -1,16 +1,18 @@
 ﻿using Carter;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Order.Application.Features.Order.Commands.CancelOrder;
 using Order.Application.Features.Order.Commands.CreateOrder;
 using Order.Application.Features.Order.Commands.UpdateOrder;
 using Order.Application.Features.Order.Queries.GetOrder;
 using Order.Application.Features.Order.Queries.GetOrders;
 using Order.Application.Features.Order.Queries.GetOrdersByUserId;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Order.API.Endpoints.V1.Orders
+namespace Order.Presentation.Endpoints.V1.Orders
 {
     public class OrdersCarterV1 : ICarterModule
     {
@@ -19,7 +21,7 @@ namespace Order.API.Endpoints.V1.Orders
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             var group1 = app.NewVersionedApi("order-carter-name-show-on-swagger")
-            .MapGroup(BaseUrl)
+                .MapGroup(BaseUrl)
                 .HasApiVersion(1);
 
             group1.MapGet(string.Empty, GetAll);
@@ -35,7 +37,7 @@ namespace Order.API.Endpoints.V1.Orders
             return Results.Ok(await sender.Send(new GetOrdersQuery { PageNumber = pageNumber, PageSize = pageSize }));
         }
 
-        public async Task<IResult> Get(ISender sender, Guid id)
+        public async Task<IResult> Get(ISender sender, long id)
         {
             return Results.Ok(await sender.Send(new GetOrderQuery { Id = id }));
         }
@@ -52,7 +54,7 @@ namespace Order.API.Endpoints.V1.Orders
             return Results.Ok("Create order successful");
         }
 
-        public async Task<IResult> Update(ISender sender, Guid id, [FromHeader(Name = "X-User-Id")] Guid userId, [FromBody] UpdateOrderCommand request)
+        public async Task<IResult> Update(ISender sender, long id, [FromHeader(Name = "X-User-Id")] Guid userId, [FromBody] UpdateOrderCommand request)
         {
             request.Id = id;
             request.LastModifiedBy = userId;
@@ -60,7 +62,7 @@ namespace Order.API.Endpoints.V1.Orders
             return Results.Ok("Update order successful");
         }
 
-        public async Task<IResult> Cancel(ISender sender, Guid id, [FromHeader(Name = "X-User-Id")] Guid userId)
+        public async Task<IResult> Cancel(ISender sender, long id, [FromHeader(Name = "X-User-Id")] Guid userId)
         {
             await sender.Send(new CancelOrderCommand { Id = id, LastModifiedBy = userId });
             return Results.Ok("Cancel order successful");

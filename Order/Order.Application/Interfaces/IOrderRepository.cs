@@ -12,6 +12,8 @@ namespace Order.Application.Interfaces
     {
         Task<PagedResponse<List<OrdersResponse>>> GetOrders(PagedRequest request);
         Task<PagedResponse<List<OrdersResponse>>> GetOrdersByUserId(PagedRequest request, Guid userId);
-        Task<OrderResponse> GetOrder(Guid id);
+        Task<List<Domain.Entities.Order>> GetExpiredOrders();
+        Task<OrderResponse> GetOrder(long id);
+        Task<long> GetLastId();
     }
 }

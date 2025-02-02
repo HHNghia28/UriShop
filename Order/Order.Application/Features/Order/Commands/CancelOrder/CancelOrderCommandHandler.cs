@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Order.Application.Features.Order.Commands.CancelOrder;
 
 namespace Order.Application.Features.Order.Commands.CancelOrder
 {
-    public class CancelOrderCommandHandler(IOrderRepository orderRepository) : IRequestHandler<CancelOrderCommand>
+    public class CancelOrderCommandHandler(IOrderRepository _orderRepository) 
+        : IRequestHandler<CancelOrderCommand>
     {
-        private readonly IOrderRepository _orderRepository = orderRepository;
-
         public async Task Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Order not found");

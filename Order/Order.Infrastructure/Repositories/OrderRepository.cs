@@ -1,24 +1,57 @@
 ﻿using Dapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Order.Application.DTO;
 using Order.Application.Exceptions;
 using Order.Application.Interfaces;
 using Order.Application.Wrappers;
+using Order.Domain.Shares;
 using Order.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Order.Infrastructure.Repositories
 {
-    public class OrderRepository(ApplicationDbContext context, ISqlConnectionFactory sqlConnectionFactory) : Repository<Domain.Entities.Order>(context), IOrderRepository
+    public class OrderRepository(ApplicationDbContext _context, ISqlConnectionFactory _sqlConnectionFactory)
+        : Repository<Domain.Entities.Order>(_context), IOrderRepository
     {
-        private readonly ISqlConnectionFactory _sqlConnectionFactory = sqlConnectionFactory;
+        public override async Task<Domain.Entities.Order> GetByIdAsync<TKey>(TKey id)
+        {
+            return await _context.Orders
+                .Include(o => o.Details)
+                .FirstOrDefaultAsync(o => Guid.Equals(o.Id, id));
+        }
+        public async Task<List<Domain.Entities.Order>> GetExpiredOrders()
+        {
+            return await _context.Orders
+                .Include(o => o.Details)
+                .Where(o => o.Status == Domain.Enums.OrderStatus.PENDING
+                && o.LastModifiedAt.HasValue && o.LastModifiedAt.Value.AddMinutes(3) < DateUtility.GetCurrentDateTime())
+                .ToListAsync();
+        }
 
-        public async Task<OrderResponse> GetOrder(Guid id)
+        public async Task<long> GetLastId()
+        {
+            using var connection = _sqlConnectionFactory.GetOpenConnection();
+
+            var currentDate = DateUtility.GetCurrentDateTime().Date;
+
+            const string sqlOrders = @"
+                SELECT ""Id""
+                FROM ""Orders""
+                WHERE ""CreatedAt"" >= @CurrentDate
+                ORDER BY ""Id"" DESC
+                LIMIT 1";
+
+            var orderId = await connection.QuerySingleOrDefaultAsync<long?>(sqlOrders, new { CurrentDate = currentDate });
+
+            return orderId ?? long.Parse(currentDate.ToString("yyyyMMdd") + "000000");
+        }
+
+        public async Task<OrderResponse> GetOrder(long id)
         {
             using var connection = _sqlConnectionFactory.GetOpenConnection();
             const string sqlOrder = @"
@@ -35,9 +68,9 @@ namespace Order.Infrastructure.Repositories
                         ""Orders"".""VoucherValue"",
                         ""Orders"".""TotalPrice"",
                         ""Orders"".""Status"",
-                        ""Orders"".""CreatedBy"",
+                        ""Orders"".""CreatedById"",
                         ""Orders"".""CreatedAt"",
-                        ""Orders"".""LastModifiedBy"",
+                        ""Orders"".""LastModifiedById"",
                         ""Orders"".""LastModifiedAt""
                     FROM ""Orders""
                     WHERE ""Orders"".""Id"" = @Id
@@ -71,18 +104,24 @@ namespace Order.Infrastructure.Repositories
         {
             using var connection = _sqlConnectionFactory.GetOpenConnection();
             const string sqlOrders = @"
-                    SELECT 
-                        ""Orders"".""Id"",
-                        ""Orders"".""FullName"",
-                        ""Orders"".""Phone"",
-                        ""Orders"".""Address"",
-                        ""Orders"".""TotalPrice"",
-                        ""Orders"".""Status"",
-                        ""Orders"".""CreatedAt"",
-                        ""Orders"".""LastModifiedAt""
-                    FROM ""Orders""
-                    ORDER BY ""Orders"".""LastModifiedAt"" DESC
-                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+                SELECT 
+                    ""Orders"".""Id"", 
+                    ""Orders"".""FullName"", 
+                    ""Orders"".""Phone"", 
+                    ""Orders"".""Address"", 
+                    ""Orders"".""TotalPrice"", 
+                    ""Orders"".""Status"", 
+                    ""Orders"".""CreatedAt"", 
+                    ""Orders"".""LastModifiedAt""
+                FROM (
+                    SELECT ""Id""
+                    FROM public.""Orders""
+                    ORDER BY ""LastModifiedAt"" DESC
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                ) AS ""OrderFiltered""
+                INNER JOIN public.""Orders"" 
+                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id"";
+            ";
 
             var offset = (request.PageNumber - 1) * request.PageSize;
             var Orders = await connection.QueryAsync<OrdersResponse>(sqlOrders, new { Offset = offset, PageSize = request.PageSize });
@@ -107,28 +146,35 @@ namespace Order.Infrastructure.Repositories
         {
             using var connection = _sqlConnectionFactory.GetOpenConnection();
             const string sqlOrders = @"
-                    SELECT 
-                        ""Orders"".""Id"",
-                        ""Orders"".""FullName"",
-                        ""Orders"".""Phone"",
-                        ""Orders"".""Address"",
-                        ""Orders"".""TotalPrice"",
-                        ""Orders"".""Status"",
-                        ""Orders"".""CreatedAt"",
-                        ""Orders"".""LastModifiedAt""
-                    FROM ""Orders""
-                    WHERE ""Orders"".""CreatedBy"" = @Id
-                    ORDER BY ""Orders"".""LastModifiedAt"" DESC
-                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+                SELECT 
+                    ""Orders"".""Id"", 
+                    ""Orders"".""FullName"", 
+                    ""Orders"".""Phone"", 
+                    ""Orders"".""Address"", 
+                    ""Orders"".""TotalPrice"", 
+                    ""Orders"".""Status"", 
+                    ""Orders"".""CreatedAt"", 
+                    ""Orders"".""LastModifiedAt""
+                FROM (
+                    SELECT ""Id""
+                    FROM public.""Orders""
+                    WHERE ""Orders"".""CreatedById"" = @Id
+                    ORDER BY ""LastModifiedAt"" DESC
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                ) AS ""OrderFiltered""
+                INNER JOIN public.""Orders"" 
+                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id"";
+            ";
 
             var offset = (request.PageNumber - 1) * request.PageSize;
             var Orders = await connection.QueryAsync<OrdersResponse>(sqlOrders, new { Offset = offset, PageSize = request.PageSize, Id = userId });
 
             const string sqlCount = @"
                     SELECT COUNT(*)
-                    FROM ""Orders""";
+                    FROM ""Orders""
+                    WHERE ""Orders"".""CreatedById"" = @Id";
 
-            var totalRecords = await connection.ExecuteScalarAsync<int>(sqlCount);
+            var totalRecords = await connection.ExecuteScalarAsync<int>(sqlCount, new { Id = userId });
 
             var response = new PagedResponse<List<OrdersResponse>>(
                 Orders.AsList(),

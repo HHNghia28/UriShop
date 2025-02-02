@@ -11,9 +11,9 @@ namespace Order.Domain.Common
     {
         [Key]
         public virtual T Id { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid CreatedById { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public Guid LastModifiedBy { get; set; }
+        public Guid LastModifiedById { get; set; }
         public DateTime? LastModifiedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -10,6 +10,6 @@ namespace Order.Application.Features.Order.Queries.GetOrder
 {
     public class GetOrderQuery : IRequest<OrderResponse>
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
     }
 }

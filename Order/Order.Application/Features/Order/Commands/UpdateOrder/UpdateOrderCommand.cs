@@ -12,7 +12,7 @@ namespace Order.Application.Features.Order.Commands.UpdateOrder
     public class UpdateOrderCommand : IRequest
     {
         [JsonIgnore]
-        public Guid Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [StringLength(100)]

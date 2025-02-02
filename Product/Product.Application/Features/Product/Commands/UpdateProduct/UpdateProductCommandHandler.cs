@@ -21,7 +21,7 @@ namespace Product.Application.Features.Product.Commands.UpdateProduct
             product.Description = request.Description;
             product.Price = request.Price;
             product.Discount = request.Discount;
-            product.Quantity = request.Quantity;
+            product.Stock = request.Stock;
             product.Photo = request.Photo;
             product.CategoryId = request.CategoryId;
             product.LastModifiedBy = request.LastModifiedBy;

@@ -1,12 +1,15 @@
 ﻿using Carter;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Product.Application.Features.Category.Commands.CreateCategory;
 using Product.Application.Features.Category.Commands.DeleteCategory;
 using Product.Application.Features.Category.Commands.UpdateCategory;
 using Product.Application.Features.Category.Queries.GetCategories;
 
-namespace Product.API.Endpoints.V1.Categories
+namespace Product.Presentation.Endpoints.V1.Categories
 {
     public class CategoryCarterApiV1 : ICarterModule
     {
@@ -53,7 +56,7 @@ namespace Product.API.Endpoints.V1.Categories
 
         public async Task<IResult> Delete(ISender sender, int id, [FromHeader(Name = "X-User-Id")] Guid userId)
         {
-            await sender.Send(new DeleteCategoryCommand { Id = id, UserId = userId});
+            await sender.Send(new DeleteCategoryCommand { Id = id, UserId = userId });
             return Results.Ok("Delete category successful");
         }
     }

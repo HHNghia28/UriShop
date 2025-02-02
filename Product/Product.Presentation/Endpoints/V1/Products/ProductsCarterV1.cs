@@ -1,7 +1,10 @@
 ﻿using Carter;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Product.Application.Exceptions;
 using Product.Application.Features.Product.Commands.CreateProduct;
 using Product.Application.Features.Product.Commands.DeleteProduct;
@@ -9,9 +12,8 @@ using Product.Application.Features.Product.Commands.UpdateProduct;
 using Product.Application.Features.Product.Queries.GetProduct;
 using Product.Application.Features.Product.Queries.GetProducts;
 using System.ComponentModel.DataAnnotations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Product.API.Endpoints.V1.Products
+namespace Product.Presentation.Endpoints.V1.Products
 {
     public class ProductsCarterV1 : ICarterModule
     {
@@ -61,7 +63,7 @@ namespace Product.API.Endpoints.V1.Products
 
         public async Task<IResult> Delete(ISender sender, Guid id, [FromHeader(Name = "X-User-Id")] Guid userId)
         {
-            await sender.Send(new DeleteProductCommand { Id = id, LastModifiedBy = userId});
+            await sender.Send(new DeleteProductCommand { Id = id, LastModifiedBy = userId });
             return Results.Ok("Delete product successful");
         }
     }

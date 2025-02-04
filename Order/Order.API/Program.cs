@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Order.API.Middlewares;
 using Order.Application.Features.Order.Queries.GetOrders;
 using Order.Application.Interfaces;
+using Order.Infrastructure.Backgrounds;
 using Order.Infrastructure.Context;
 using Order.Infrastructure.Repositories;
 using Product.API.Services;
@@ -63,6 +64,8 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+
+builder.Services.AddHostedService<OrderCleanupService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();

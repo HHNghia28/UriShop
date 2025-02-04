@@ -5,6 +5,7 @@ using Identity.Application.Interfaces;
 using Identity.Application.Wrappers;
 using Identity.Domain;
 using Identity.Domain.Entities;
+using Identity.Domain.Shares;
 using Identity.Infrastructure.Context;
 using Identity.Infrastructure.Shares;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +51,7 @@ namespace Identity.Infrastructure.Repositories
             if (user == null) return false;
 
             var confirm = await _context.EmailConfirmationTokens
-                .FirstOrDefaultAsync(e => e.UserId == userId && e.Token.Equals(code) && e.ExpirationDate >= DateTime.UtcNow);
+                .FirstOrDefaultAsync(e => e.UserId == userId && e.Token.Equals(code) && e.ExpirationDate >= DateUtility.GetCurrentDateTime());
 
             return confirm != null;
         }
@@ -62,7 +63,7 @@ namespace Identity.Infrastructure.Repositories
             await _context.EmailConfirmationTokens.AddAsync(new EmailConfirmationToken
             {
                 Id = Guid.NewGuid(),
-                ExpirationDate = DateTime.UtcNow.AddMinutes(5),
+                ExpirationDate = DateUtility.GetCurrentDateTime().AddMinutes(5),
                 Token = code,
                 UserId = userId
             });
@@ -109,7 +110,7 @@ namespace Identity.Infrastructure.Repositories
                 .Include(t => t.User)
                 .ThenInclude(t => t.Role)
                 .FirstOrDefaultAsync(t => t.Token.ToLower().Equals(refreshToken.ToLower()) 
-                && t.ExpirationDate >= DateTime.UtcNow);
+                && t.ExpirationDate >= DateUtility.GetCurrentDateTime());
 
             return token?.User;
         }

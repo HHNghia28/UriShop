@@ -50,8 +50,8 @@ namespace Order.Presentation.Endpoints.V1.Orders
         public async Task<IResult> Create(ISender sender, [FromHeader(Name = "X-User-Id")] Guid userId, [FromBody] CreateOrderCommand request)
         {
             request.CreatedBy = userId;
-            await sender.Send(request);
-            return Results.Ok("Create order successful");
+            var id = await sender.Send(request);
+            return Results.Ok(id);
         }
 
         public async Task<IResult> Update(ISender sender, long id, [FromHeader(Name = "X-User-Id")] Guid userId, [FromBody] UpdateOrderCommand request)

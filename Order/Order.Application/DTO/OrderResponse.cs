@@ -1,6 +1,7 @@
 ﻿using Order.Domain.Common;
 using Order.Domain.Entities;
 using Order.Domain.Enums;
+using Order.Domain.Shares;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -37,8 +38,8 @@ namespace Order.Application.DTO
         public OrderStatus Status { get; set; } = OrderStatus.PENDING;
         public ICollection<OrderDetailResponse> Details { get; set; }
         public Guid CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateUtility.GetCurrentDateTime();
         public Guid LastModifiedBy { get; set; }
-        public DateTime? LastModifiedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastModifiedAt { get; set; } = DateUtility.GetCurrentDateTime();
     }
 }

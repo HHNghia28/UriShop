@@ -1,4 +1,5 @@
 ﻿using Identity.Domain.Common;
+using Identity.Domain.Shares;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,8 +30,8 @@ namespace Identity.Domain.Entities
         public int RoleId { get; set; }
         public Role Role { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? LastModifiedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateUtility.GetCurrentDateTime();
+        public DateTime? LastModifiedAt { get; set; } = DateUtility.GetCurrentDateTime();
     }
 
 }

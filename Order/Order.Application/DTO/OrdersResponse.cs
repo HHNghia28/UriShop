@@ -1,4 +1,5 @@
 ﻿using Order.Domain.Enums;
+using Order.Domain.Shares;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,7 +24,7 @@ namespace Order.Application.DTO
         public string Address { get; set; }
         public int TotalPrice { get; set; } = 0;
         public OrderStatus Status { get; set; } = OrderStatus.PENDING;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? LastModifiedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateUtility.GetCurrentDateTime();
+        public DateTime? LastModifiedAt { get; set; } = DateUtility.GetCurrentDateTime();
     }
 }

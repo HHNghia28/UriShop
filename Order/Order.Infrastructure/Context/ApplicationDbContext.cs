@@ -96,9 +96,9 @@ namespace Order.Infrastructure.Context
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        order.CreatedAt = DateTime.UtcNow;
+                        order.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    order.LastModifiedAt = DateTime.UtcNow;
+                    order.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
             }
 
@@ -119,9 +119,9 @@ namespace Order.Infrastructure.Context
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        order.CreatedAt = DateTime.UtcNow;
+                        order.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    order.LastModifiedAt = DateTime.UtcNow;
+                    order.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
             }
 

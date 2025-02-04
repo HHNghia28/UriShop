@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Product.Domain.Entities;
+using Product.Domain.Shares;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,18 +149,18 @@ namespace Product.Infrastructure.Context
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        category.CreatedAt = DateTime.UtcNow;
+                        category.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    category.LastModifiedAt = DateTime.UtcNow;
+                    category.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
 
                 if (entry.Entity is Domain.Entities.Product product)
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        product.CreatedAt = DateTime.UtcNow;
+                        product.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    product.LastModifiedAt = DateTime.UtcNow;
+                    product.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
             }
 
@@ -180,18 +181,18 @@ namespace Product.Infrastructure.Context
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        category.CreatedAt = DateTime.UtcNow;
+                        category.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    category.LastModifiedAt = DateTime.UtcNow;
+                    category.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
 
                 if (entry.Entity is Domain.Entities.Product product)
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        product.CreatedAt = DateTime.UtcNow;
+                        product.CreatedAt = DateUtility.GetCurrentDateTime();
                     }
-                    product.LastModifiedAt = DateTime.UtcNow;
+                    product.LastModifiedAt = DateUtility.GetCurrentDateTime();
                 }
             }
 

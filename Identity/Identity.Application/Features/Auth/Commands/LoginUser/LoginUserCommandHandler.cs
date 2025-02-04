@@ -2,6 +2,7 @@
 using Identity.Application.Exceptions;
 using Identity.Application.Handlers;
 using Identity.Application.Interfaces;
+using Identity.Domain.Shares;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Identity.Application.Features.Auth.Commands.LoginUser
             var accessToken = _tokenService.GenerateJwtToken(user);
             var refreshToken = _tokenService.GenerateRefreshToken(64);
 
-            await _userRepository.SaveRefreshToken(user.Id, refreshToken, DateTime.UtcNow.AddDays(1));
+            await _userRepository.SaveRefreshToken(user.Id, refreshToken, DateUtility.GetCurrentDateTime().AddDays(1));
             await _userRepository.SaveAsync();
 
             return new LoginResponse

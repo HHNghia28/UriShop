@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Identity.Domain.Shares;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace Identity.Domain.Common
         [Key]
         public virtual T Id { get; set; }
         public Guid CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateUtility.GetCurrentDateTime();
         public Guid LastModifiedBy { get; set; }
-        public DateTime? LastModifiedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastModifiedAt { get; set; } = DateUtility.GetCurrentDateTime();
     }
 }

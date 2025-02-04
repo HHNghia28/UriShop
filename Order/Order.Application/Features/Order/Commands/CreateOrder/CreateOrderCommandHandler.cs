@@ -8,12 +8,23 @@ using System.Threading.Tasks;
 using Order.Application.Exceptions;
 using Order.Domain.Entities;
 using Order.Domain.Shares;
+using Polly.Retry;
+using Polly;
 
 namespace Order.Application.Features.Order.Commands.CreateOrder
 {
-    public class CreateOrderCommandHandler(IOrderRepository _orderRepository) 
-        : IRequestHandler<CreateOrderCommand, long>
+    public class CreateOrderCommandHandler(IOrderRepository _orderRepository)
+    : IRequestHandler<CreateOrderCommand, long>
     {
+        private readonly AsyncRetryPolicy _retryPolicy = Policy
+            .Handle<Exception>()
+            .WaitAndRetryAsync(3, retryAttempt =>
+                TimeSpan.FromMilliseconds(100),
+                (exception, timeSpan, retryCount, context) =>
+                {
+                    Console.WriteLine($"Retry {retryCount} due to: {exception.Message}");
+                });
+
         public async Task<long> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             List<OrderDetail> orderDetails = [];
@@ -21,16 +32,6 @@ namespace Order.Application.Features.Order.Commands.CreateOrder
 
             foreach (var item in request.Details)
             {
-                //var product = await _productRepository.GetByIdAsync(item.ProductId) ?? throw new NotFoundException("Product not found");
-
-                //if (product.IsDeleted || product.Stock < item.Quantity)
-                //{
-                //    throw new InvalidOperationException("Product '" + product.Name + "' not enough");
-                //}
-
-                //product.Stock -= item.Quantity;
-                //await _productRepository.UpdateAsync(product);
-
                 orderDetails.Add(new OrderDetail()
                 {
                     Id = Guid.NewGuid(),
@@ -45,9 +46,11 @@ namespace Order.Application.Features.Order.Commands.CreateOrder
                 });
             }
 
-            var totalPrice = orderDetails.Sum(d => (d.Price * (1 - (d.Discount / 100))) * d.Quantity) * (1 - (request.VoucherValue / 100)) + request.ShippingFee - request.DiscountFee;
+            var totalPrice = orderDetails.Sum(d => (d.Price * (1 - (d.Discount / 100))) * d.Quantity)
+                             * (1 - (request.VoucherValue / 100))
+                             + request.ShippingFee - request.DiscountFee;
 
-            await _orderRepository.AddAsync(new Domain.Entities.Order()
+            var order = new Domain.Entities.Order()
             {
                 Id = orderId,
                 Address = request.Address,
@@ -63,12 +66,13 @@ namespace Order.Application.Features.Order.Commands.CreateOrder
                 VoucherValue = request.VoucherValue,
                 TotalPrice = totalPrice,
                 Details = orderDetails
-            });
+            };
 
-            await _orderRepository.SaveAsync();
+            await _orderRepository.AddAsync(order);
+
+            await _retryPolicy.ExecuteAsync(async () => await _orderRepository.SaveAsync());
 
             return orderId;
         }
-
     }
 }

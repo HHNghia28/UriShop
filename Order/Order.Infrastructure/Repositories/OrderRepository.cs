@@ -120,7 +120,8 @@ namespace Order.Infrastructure.Repositories
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
                 ) AS ""OrderFiltered""
                 INNER JOIN public.""Orders"" 
-                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id"";
+                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id""
+                ORDER BY ""LastModifiedAt"" DESC;
             ";
 
             var offset = (request.PageNumber - 1) * request.PageSize;
@@ -157,13 +158,14 @@ namespace Order.Infrastructure.Repositories
                     ""Orders"".""LastModifiedAt""
                 FROM (
                     SELECT ""Id""
-                    FROM public.""Orders""
+                    FROM ""Orders""
                     WHERE ""Orders"".""CreatedById"" = @Id
                     ORDER BY ""LastModifiedAt"" DESC
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
                 ) AS ""OrderFiltered""
-                INNER JOIN public.""Orders"" 
-                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id"";
+                INNER JOIN ""Orders"" 
+                ON ""OrderFiltered"".""Id"" = ""Orders"".""Id""
+                ORDER BY ""LastModifiedAt"" DESC;
             ";
 
             var offset = (request.PageNumber - 1) * request.PageSize;

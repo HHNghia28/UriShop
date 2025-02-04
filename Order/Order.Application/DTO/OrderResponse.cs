@@ -37,9 +37,9 @@ namespace Order.Application.DTO
         public int TotalPrice { get; set; } = 0;
         public OrderStatus Status { get; set; } = OrderStatus.PENDING;
         public ICollection<OrderDetailResponse> Details { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid CreatedById { get; set; }
         public DateTime CreatedAt { get; set; } = DateUtility.GetCurrentDateTime();
-        public Guid LastModifiedBy { get; set; }
+        public Guid LastModifiedById { get; set; }
         public DateTime? LastModifiedAt { get; set; } = DateUtility.GetCurrentDateTime();
     }
 }

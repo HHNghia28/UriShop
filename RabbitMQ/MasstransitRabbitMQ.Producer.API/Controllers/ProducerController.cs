@@ -19,7 +19,7 @@ namespace MasstransitRabbitMQ.Producer.API.Controllers
                 Id = Guid.NewGuid(),
                 Description = "Sms description",
                 Name = "Sms notification",
-                TimeStamp = DateUtility.GetCurrentDateTime(),
+                TimeStamp = DateTime.UtcNow,
                 TransactionId = Guid.NewGuid(),
                 Type = "sms"
             });

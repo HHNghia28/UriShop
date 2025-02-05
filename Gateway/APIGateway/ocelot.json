@@ -73,6 +73,18 @@
       "UpstreamHttpMethod": [ "POST", "GET", "PUT" ]
     },
     {
+      "DownstreamPathTemplate": "/api/v1/payments/{action}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5068
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/payments/{action}",
+      "UpstreamHttpMethod": [ "POST", "GET" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/users/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

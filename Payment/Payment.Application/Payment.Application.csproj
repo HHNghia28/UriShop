@@ -8,12 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="MassTransit" Version="8.3.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.2" />
     <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Payment.Domain\Payment.Domain.csproj" />
     <ProjectReference Include="..\Payment.Infrastructure.PayOS\Payment.Infrastructure.PayOS.csproj" />
+    <ProjectReference Include="..\Payment.Infrastructure.RabbitMQ\Payment.Infrastructure.RabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

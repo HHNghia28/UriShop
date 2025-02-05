@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 using Payment.Application.Exceptions;
 using Payment.Application.Interfaces;
 using Payment.Infrastructure.PayOS.Config;
+using MassTransit;
+using Infrastructure.RabbitMQ.Events;
 
 namespace Payment.Application.Features.Payment.Commands.OrderPaymentByPayOSReturn
 {
     public class OrderPaymentByPayOSReturnCommandHandler(IPaymentRepository _paymentRepository
+        , ISendEndpointProvider _sendEndpointProvider
         , IOptions<PayOSConfig> payosConfigOptions) 
         : IRequestHandler<OrderPaymentByPayOSReturnCommand, string>
     {
@@ -33,6 +36,9 @@ namespace Payment.Application.Features.Payment.Commands.OrderPaymentByPayOSRetur
             }
 
             await _paymentRepository.UpdateAsync(payment);
+
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:update-status-order-queue"));
+            await endpoint.Send(new PaymentPayOSReturnEvent { OrderId = orderId, IsSuccess = request.Code == "00" && request.Status == "PAID" }, cancellationToken);
 
             return _payOSConfig.ClientRedirectUrl;
         }

@@ -10,10 +10,12 @@ using Order.Domain.Entities;
 using Order.Domain.Shares;
 using Polly.Retry;
 using Polly;
+using Infrastructure.RabbitMQ.Events;
+using MassTransit;
 
 namespace Order.Application.Features.Order.Commands.CreateOrder
 {
-    public class CreateOrderCommandHandler(IOrderRepository _orderRepository)
+    public class CreateOrderCommandHandler(IOrderRepository _orderRepository, ISendEndpointProvider _sendEndpointProvider)
     : IRequestHandler<CreateOrderCommand, long>
     {
         private readonly AsyncRetryPolicy _retryPolicy = Policy
@@ -71,6 +73,9 @@ namespace Order.Application.Features.Order.Commands.CreateOrder
             await _orderRepository.AddAsync(order);
 
             await _retryPolicy.ExecuteAsync(async () => await _orderRepository.SaveAsync());
+
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:create-payment-queue"));
+            await endpoint.Send(new CreatePaymentEvent { OrderId = orderId, RequiredAmount = totalPrice, CreatedById = request.CreatedBy }, cancellationToken);
 
             return orderId;
         }

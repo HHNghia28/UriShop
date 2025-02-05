@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Order.API.Extensions;
 using Order.API.Middlewares;
 using Order.Application.Features.Order.Queries.GetOrders;
 using Order.Application.Interfaces;
@@ -64,6 +65,8 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+
+builder.Services.AddConfigMasstransitRebbitMQ(builder.Configuration);
 
 builder.Services.AddHostedService<OrderCleanupService>();
 
